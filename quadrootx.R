@@ -10,9 +10,29 @@
 
 quadrootx<-function(a,b,c)
 {
+     
      print("*****Quadratic Equation*****")
      paste0("\n")
-     cat("\n",a,"x^2"," + ",b,"x"," + ",c)
+     equation = cat(a,"x^2")
+     if (b>=0)
+     {
+          equation= cat(equation," + ",b,"x")
+     }else
+     {
+          equation= cat(equation," ",b,"x")
+     }
+     
+     if (c>0)
+     {
+          equation= cat(equation," + ",c)
+     }else if(c<0)
+     {
+          equation= cat(equation," ",c)
+     }
+     
+     
+     
+     cat("\n",equation)
      paste0("\n")
 
      x1=1
