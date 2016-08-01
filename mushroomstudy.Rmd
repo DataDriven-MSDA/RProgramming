@@ -1,0 +1,265 @@
+---
+title: "R Track Week 3 Assignment"
+author: "Kumudini Bhave"
+date: "July 31, 2016"
+output:
+  html_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+******
+
+# **Mushroom Data Study**
+
+## Summary
+
+This is an R Markdown document for providing documentation for performing **Data Transformation on the Mushroom DataSet**
+
+Attempted to study data that comprises of **Edible** as well as **Poisonous** mushrooms.
+Hence observations selected comprise of mushrooms that grow in **Grasses** or **Meadows** Habitat
+and mushrooms that have an odor which is either like **Almond** or **Pungent**.
+
+Following attributes are extracted and mapped to the explicit values for the observations selected as above, from the **Mushroom Dataset**:
+
+- **Class :** 
+     - *e: Edible*
+     - *p: Poisonous*
+- **Cap Shape :**
+     - *b: Bell*
+     - *c: Conical*
+     - *x: Convex*
+     - *f: Flat*
+     - *k: Knobbed*
+     - *s: Sunken*
+- **Cap Surface :**
+     - *f: Fibrous*
+     - *g: Grooves*
+     - *y: Scaly*
+     - *s: Smooth*
+- **Cap Color :**
+     - *n: Brown*
+     - *b: Buff*
+     - *c: Cinnamon*
+     - *g: Gray*
+     - *r: Green*
+     - *p: Pink*
+     - *u: Purple*
+     - *e: Red*
+     - *w: White*
+     - *y: Yellow*
+- **Odor :**
+     - *a: Almond*
+     - *p: Pungent*
+- **Stalk Shape :**
+     - *e: Enlarging*
+     - *t: Tapering*
+- **Stalk Root :**
+     - *b: Bulbous*
+     - *c: Club*
+     - *u: Cup*
+     - *e: Equal*
+     - *z: Rhizomorphs*
+     - *r: Rooted*
+     - *?: Missing*
+- **Spore Color :**
+     - *k: Black*
+     - *n: Brown*
+     - *b: Buff*
+     - *h: Chocolate*
+     - *r: Green*
+     - *o: Orange*
+     - *u: Purple*
+     - *w: White*
+     - *y: Yellow*
+- **Population :**
+     - *a: Abundant*
+     - *c: Clustered*
+     - *n: Numerous*
+     - *s: Scattered*
+     - *v: Several*
+     - *y: Solitary*
+- **Habitat :**
+     - *g: Grass*
+     - *m: Meadows*
+
+******
+
+## R Code For Data Transformation Of Mushroom Dataset
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+
+##################################################################################################
+# @ Kumudini Bhave 
+# R Bridge Course Week 3 
+# Data Transformation for Mushroom Dataset
+#
+# This code provides the set of instructions to access, explore and transform the Mushroom Dataset
+# 
+# Libraries Used : RCurl
+# ################################################################################################
+
+```
+
+
+### Extracting Raw Data From GitHub Data File And Reading In CSV Format
+
+```{r}
+
+# Loading RCurl package to help scrape data from web (stored on GitHub).
+library(RCurl)
+
+# Loading plyr package to help map abbreviated values to explained.
+library(plyr)
+
+data.giturl <- "https://raw.githubusercontent.com/DataDriven-MSDA/RProgramming/master/agaricus-lepiota.data"
+mushroom.gitdata <- getURL(data.giturl)
+mushroom.gitdata.csv <- read.csv(text=mushroom.gitdata, header=F, sep=",",stringsAsFactors = FALSE)
+
+```
+
+
+
+### Extracting Select Attributes For Mushroom Study
+
+
+```{r results='hide' }
+
+# Attempt to study data that comprises of edible as well as poisonous mushrooms.
+# Hence observations selected comprise of mushroom habitat in grasses or meadows 
+# and mushroom odor either almond like or pungent
+
+mushroom.datastudy <- subset(mushroom.gitdata.csv,(V23=="g" | V23 == "m") & (V6 == "a" | V6 == "p"),select=c(V1,V2,V3,V4,V6,V11,V12,V21,V22,V23))
+
+# Verifying the number of attributes
+length(mushroom.datastudy)
+# Verifying the number of observations selected
+nrow(mushroom.datastudy)
+
+```
+
+
+### Renaming Selected Attributes 
+```{r}
+# Naming the Attributes selected for study
+colnames(mushroom.datastudy) <- c("Class","CapShape","CapSurface","CapColor","Odor","StalkShape","StalkRoot","SporeColor","Population","Habitat")
+
+```
+
+### Mapping Abbreviated Values For Selected Attributes 
+
+```{r}
+# Mapping the attributes from abbreviated to explanatory
+```
+
+##### Class
+  
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+mushroom.datastudy$Class[mushroom.datastudy$Class == "e"] <- "Edible"
+mushroom.datastudy$Class[mushroom.datastudy$Class == "p"] <- "Poisonous"
+
+## Can also be mapped as follows for larger set of values for an attribute
+mushroom.datastudy$Class <- mapvalues(mushroom.datastudy$Class,
+                                           from=c("e","p"),
+                                           to=c("Edible","Poisonous"))
+```
+
+##### Cap Shape
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$CapShape <- mapvalues(mushroom.datastudy$CapShape,
+                                           from=c("b","c","x","f","k","s"),
+                                           to=c("Bell","Conical","Convex","Flat","Knobbed","Sunken"))
+```
+
+##### Cap Surface
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$CapSurface <- mapvalues(mushroom.datastudy$CapSurface,
+                                           from=c("f","g","y","s"),
+                                           to=c("Fibrous","Grooves","Scaly","Smooth"))
+```
+
+##### Cap Color
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$CapColor <- mapvalues(mushroom.datastudy$CapColor,
+                         from=c("n","b","c","g","r","p","u","e","w","y"),
+                         to=c("Brown","Buff","Cinnamon","Gray","Green","Pink","Purple","Red","White","Yellow"))  
+```
+
+##### Odor
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$Odor <- mapvalues(mushroom.datastudy$Odor,
+                                           from=c("a","p"),
+                                           to=c("Almond","Pungent"))
+```
+
+##### Stalk Shape
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$StalkShape <- mapvalues(mushroom.datastudy$StalkShape,
+                                           from=c("e","t"),
+                                           to=c("Enlarging","Tapering"))
+```
+
+##### Stalk Root
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+# There are missing values for this attribute denoted by ?, These are replaced with 'NA'
+
+mushroom.datastudy$StalkRoot <- mapvalues(mushroom.datastudy$StalkRoot,
+                                           from=c("b","c","u","e","z","r","?"),
+                                           to=c("Bulbous","Club","Cup","Equal","Rhizomorphs","Rooted","NA"))
+```
+
+##### Spore Color
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$SporeColor <- mapvalues(mushroom.datastudy$SporeColor,
+                              from=c("k","n","b","h","r","o","u","w","y"),
+                              to=c("Black","Brown","Buff","Chocolate","Green","Orange","Purple","White","Yellow"))
+
+```
+
+##### Population
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$Population <- mapvalues(mushroom.datastudy$Population,
+                                   from=c("a","c","n","s","v","y"),
+                                   to=c("Abundant","Clustered","Numerous","Scattered","Several","Solitary"))
+```
+
+##### Habitat
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+
+mushroom.datastudy$Habitat <- mapvalues(mushroom.datastudy$Habitat, 
+                               from=c("g","m"), 
+                               to=c("Grass","Meadows"))
+```
+
+******
+
+### Listing The Observations For Study
+
+```{r, results='asis', tidy=TRUE, tidy.opts=list(width.cutoff=180)}
+cat("Total observations to study for selected criteria and attributes: ",nrow(mushroom.datastudy))
+knitr::kable(mushroom.datastudy)
+
+```
+
+******
+
+
