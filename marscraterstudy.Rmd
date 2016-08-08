@@ -1,0 +1,322 @@
+---
+title: "R Track Week 4 Assignment"
+author: "Kumudini Bhave"
+date: "August 6, 2016"
+output:
+  html_document:
+    toc: yes
+---
+
+********
+
+
+# **Mars Crater Study**
+
+## Summary
+
+This is an R Markdown document for providing documentation for performing **Data Exploration of the Mars Craters  DataSet**
+
+
+Attempted to study data that comprises of various Craters on Mars with recorded information of the Latitude, Longitude, Circular Diameter, Depth of rim floor, Different Morphological data, Number of Layers 
+The Mars Crater Study aims to focus on the **Circular Diameter** as well as **Depth of rim floor** and **Number of Layers**.
+
+
+Following attributes are extracted and mapped to the explicit values for the observations selected as above, from the **Mars Craters  DataSet**:
+
+- **DIAM_CIRCLE_IMAGE** : Diameter from a non-linear least-squares circle fit to the
+                         vertices selected to manually identify the crater rim. Units are km.
+
+- **DEPTH_RIMFLOOR_TOPOG** : Defined as DEPTH_RIM_TOPOG - DEPTH_FLOOR_TOPOG
+                         Where 
+                         - **DEPTH_RIM_TOPOG** : Average elevation of each of the manually determined N                                              points along the crater rim. Points are selected as relative topographic highs                                         under the assumption they are the least eroded so most original points along the rim.                                  Units are km.
+                         - **DEPTH_FLOOR_TOPOG** : Average elevation of each of the manually determined N                                            points inside the crater floor. Points were chosen as the lowest elevation that 
+                              did not include visible embedded craters. Units are km.
+
+- **NUMBER_LAYERS** : The maximum number of cohesive layers in any azimuthal direction that
+                         could be reliably identified.
+
+
+
+Hence observations selected comprise of Craters that has *Depth of Rim Floor Topology of at least 1* and *Circular Diameter of 10* and has *more than 0 Layers*
+
+********
+
+## R Code For Data Exploration and Transformation Of Mars Craters Dataset
+
+
+```{r include=FALSE, cache=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+knitr::opts_chunk$set(message = FALSE, echo=TRUE)
+######################################################################################################
+# MARS CRATER STUDY
+# @ Kumudini Bhave 
+# R Bridge Course Week 4 
+# Data Exploration of Mars Crater Dataset
+#
+# This code provides the set of instructions to access, explore and transform the Mars Crater Dataset
+# 
+# Libraries Used : RCurl, ggplot, gcookbook. data.table
+#######################################################################################################
+
+```
+
+********
+
+### Extracting Raw Data From GitHub Data File And Reading In CSV Format
+Loading RCurl package to help scrape data from web (stored on GitHub).
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+knitr::opts_chunk$set(message = FALSE, echo=TRUE)
+
+
+library(RCurl)
+library(ggplot2)
+library(gcookbook)
+library(DT)
+
+
+```
+
+
+Extracting data from GitHub Data file, and reading the same in CSV format
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+data.giturl <- "https://raw.githubusercontent.com/DataDriven-MSDA/RProgramming/master/marscrater_pds.csv"
+mars.gitdata <- getURL(data.giturl)
+mars.gitdata.csv <- read.csv2(text=mars.gitdata, header=T, sep=",",stringsAsFactors = FALSE)
+```
+
+
+********
+
+
+
+### Extracting Select Attributes For Mars Craters Dataset Study
+
+
+Subsetting the data based on Circular Diamater, Depth and Number of Layers
+
+
+```{r results='markup', tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+marscrater.datastudy <- subset(mars.gitdata.csv,(NUMBER_LAYERS > 0 & DEPTH_RIMFLOOR_TOPOG > 1 & DIAM_CIRCLE_IMAGE > 10),na.rm=T,select=c(DIAM_CIRCLE_IMAGE, DEPTH_RIMFLOOR_TOPOG, NUMBER_LAYERS))
+
+
+# Verifying the number of attributes
+
+cat("Number of attributes for study : " , length(marscrater.datastudy))
+
+
+# Verifying the number of observations selected
+cat("Number of observations for study : " ,nrow(marscrater.datastudy))
+```
+
+********
+
+### Data For Mars Craters Dataset Study
+
+```{r results='markup', tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+
+datatable(marscrater.datastudy, options = list(
+  searching = FALSE,
+  pageLength = 5,
+  lengthMenu = c(5, 10, 15, 20)
+))
+
+
+```
+
+
+
+********
+
+### Plotting a Histogram based on Number of Layers in the Crater
+
+Plotting Histograms based on continuous variables, treating Number of Layers as a continuous variable. IT plots the count for each number of layer.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+marscrater.datastudy$NUMBER_LAYERS <- as.numeric(marscrater.datastudy$NUMBER_LAYERS)
+
+hist(marscrater.datastudy$NUMBER_LAYERS, main="Craters On Mars Histogram", xlab="Layers In Craters", border = "blue", col="green")
+
+
+
+```
+
+
+********
+
+
+A densisty plot can also be achieved by following.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+ggplot(data=marscrater.datastudy) + geom_density(aes(x = NUMBER_LAYERS), fill = "yellow")
+
+```
+
+********
+
+Plotting a histogram with ggplot function
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+ggplot(data=marscrater.datastudy) + geom_histogram(aes(x = NUMBER_LAYERS))
+
+
+ggplot(marscrater.datastudy, aes(x=NUMBER_LAYERS)) +  geom_histogram(binwidth=1)
+
+```
+
+
+********
+
+
+### Plotting Scatter Plots 
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+marscrater.datastudy$DEPTH_RIMFLOOR_TOPOG <- as.numeric(marscrater.datastudy$DEPTH_RIMFLOOR_TOPOG)
+marscrater.datastudy$DIAM_CIRCLE_IMAGE <- as.numeric(marscrater.datastudy$DIAM_CIRCLE_IMAGE)
+
+marscrater.datastudy$NUMBER_LAYERS <- as.character(marscrater.datastudy$NUMBER_LAYERS)
+```
+
+
+********
+
+
+#### Plotting Simple Scatter Plot 
+
+Plotting a simple scatter plot with grayscale / monochrome
+
+
+Plotting simple scatter plot with base plot function
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+plot(DIAM_CIRCLE_IMAGE~DEPTH_RIMFLOOR_TOPOG, data = marscrater.datastudy)
+
+```
+
+
+********
+
+Plotting simple scatter plot with ggplot function
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+ggplot(marscrater.datastudy, aes(x = DEPTH_RIMFLOOR_TOPOG, y = DIAM_CIRCLE_IMAGE)) + geom_point() + scale_x_continuous(name="Depth Of Crater", breaks=c(0.0, 0.5, 1.0, 1.5, 2.0, 2.5)) + scale_y_continuous(name="Diameter Of Crater", breaks= c(30, 60, 90, 120, 150)) 
+```
+
+********
+
+
+#### Plotting Scatter Plot based on Continuous Variables of Circular Diamater , Depth Of Crater and Discrete Variable of  Number of Layers in the Crater With Aesthetics of Shape And Color to Distinguish
+
+This divides the data with different shapes and color for categorical variable of **Number Of Layers**
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+ggplot(marscrater.datastudy, aes(x=(DEPTH_RIMFLOOR_TOPOG), y=(DIAM_CIRCLE_IMAGE), shape = NUMBER_LAYERS, colour = NUMBER_LAYERS )) + geom_point() + scale_x_continuous(name="Depth Of Crater", breaks = seq(0,2.5,0.5), labels= seq(0,2.5,0.5)) + scale_y_continuous(name="Diameter Of Crater", breaks = seq(0,150,30), labels= seq(0,150,30)) 
+
+
+```
+
+
+
+This can also be achieved by setting a base variable to the basic structure/ parameters of the scatter plot and adding enhacements to the base variable
+We find the same results.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+craterplot <- ggplot(marscrater.datastudy, aes(x=(DEPTH_RIMFLOOR_TOPOG), y=(DIAM_CIRCLE_IMAGE), shape = NUMBER_LAYERS, colour = NUMBER_LAYERS ))
+craterplot + geom_point() + scale_x_continuous(name="Depth Of Crater", breaks = seq(0,4,0.5), labels= seq(0,4,0.5)) + scale_y_continuous(name="Diameter Of Crater", breaks = seq(0,100,30), labels= seq(0,100,30)) + ggtitle("Mars Crater")
+
+```
+
+
+********
+
+#### Plotting Scatter Plot With Facet Wrap based on Continuous Variables of Circular Diamater , Depth Of Crater and Discrete Variable of  Number of Layers in the Crater With Aesthetics of Shape And Color to Distinguish
+
+This creates **faceted scatter plots** for different levels of **Number Of Layers** and makes a separate pane for each.
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+craterbyfacetplot <- ggplot(marscrater.datastudy, aes(x=DEPTH_RIMFLOOR_TOPOG, y=DIAM_CIRCLE_IMAGE))
+craterbyfacetplot + geom_point(aes(color = NUMBER_LAYERS)) + facet_wrap(~NUMBER_LAYERS, labeller = "label_value") + labs(x="Depth Of Crater",y="Diameter Of Crater") + ggtitle("Mars Crater")
+
+```
+
+
+********
+
+
+### Plotting a BoxPlot 
+
+#### Box Plot with ggplot
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+ggplot(marscrater.datastudy, aes(x = NUMBER_LAYERS, y= DIAM_CIRCLE_IMAGE )) + geom_boxplot()
+
+```
+
+
+
+#### Box Plot with base package 
+
+The colors area for the box plots are repeated cyclically
+
+```{r , tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+boxplot(DEPTH_RIMFLOOR_TOPOG~NUMBER_LAYERS, data=marscrater.datastudy, notch=FALSE, col=(c("gold","blue","green")),main="Mars Craters", xlab="Number Of Layers", ylab="Depth")
+
+```
+
+
+Creating notched boxplots
+
+```{r , tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+
+boxplot(DEPTH_RIMFLOOR_TOPOG~NUMBER_LAYERS, data=marscrater.datastudy, notch=TRUE, col=(c("gold","blue","green")),main="Mars Craters", xlab="Number Of Layers", ylab="Depth")
+```
+
+********
+
+
+### Spooling the graphical output to desired file format
+
+The following code allows the plots to be spooled to a file of desired format. Here it is spooled to PDF format.
+
+```{r results='hide', tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+sink("MarsCraterPlots", append= TRUE, split= TRUE)
+cat("Plots for Mars Crater Data ")
+pdf("F:\\MarsCraterPlots_PDF.pdf")
+
+ggplot(marscrater.datastudy, aes(x = NUMBER_LAYERS, y= DIAM_CIRCLE_IMAGE )) + geom_boxplot()
+
+jpeg("F:\\MarsCraterPlots_JPEG.jpeg")
+marscrater.datastudy$DIAM_CIRCLE_IMAGE <- as.numeric(marscrater.datastudy$DIAM_CIRCLE_IMAGE)
+
+hist(x =marscrater.datastudy$DIAM_CIRCLE_IMAGE, xlab= "Histogram of Mars Crater Diameter")
+dev.off()
+```
+
+
+
+
+
