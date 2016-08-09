@@ -1,19 +1,19 @@
 Variable Name,Description,Main Source
-Country,Country Name for which the data is recorded,World Bank
-breastcancerper100TH,"breast cancer new cases per 100,000 female
+country,Country Name for which the data is recorded,World Bank
+breastcancerper100TH,"Breast cancer new cases per 100,000 female 
+
 Number of new cases of breast cancer in 100,000 female residents
 during the certain year.","ARC (International Agency for
 Research on Cancer)"
-femaleemployrate,"female employees age 15+ (% of population)
-Percentage of female population, age above 15, that has been
-employed during the given year.","International Labour
+femaleemployrate,"Female employees age 15+ (% of population)
+
+Percentage of female population, age above 15, that has been employed during the given year.","International Labour
 Organization"
-employrate,"total employees age 15+ (% of population)
+employrate,"Total employees age 15+ (% of population)
 Percentage of total population, age above 15, that has been employed
 during the given year.","International Labour
 Organization"
-urbanrate,"urban population (% of total)
-Urban population refers to people living in urban areas as defined by
-national statistical offices (calculated using World Bank population
-estimates and urban ratios from the United Nations World Urbanization
+urbanrate,"Urban population (% of total)
+
+Urban population refers to people living in urban areas as defined by national statistical offices (calculated using World Bank population estimates and urban ratios from the United Nations World Urbanization
 Prospects)",World Bank
