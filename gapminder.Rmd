@@ -1,0 +1,443 @@
+---
+title: "R Track Final Project"
+author: "Kumudini Bhave"
+date: "August 9, 2016"
+output:
+  html_document:
+    toc: yes
+---
+
+
+********
+
+# **GapMinder DataSet Study : Relation Between Breast Cancer And Female Employment**
+
+********
+
+## Summary
+
+This is an R Markdown document for providing documentation for performing **Data Exploration And Analysis Of the GapMinder  DataSet Based On Research Question / Hypothesis**
+
+## GapMinder DataSet
+
+GapMinder is a non-profit venture promoting sustainable global development and achievement of the United Nations Millennium Development Goals. It seeks to increase the use and understanding of statistics about social, economic, and environmental development at local, national and global levels. 
+
+GapMinder collects data from a handful of sources, including the Institute for Health Metrics and Evaulation, US Census Bureau's International Database, United Nations Statistics Division, and the World Bank.
+
+More information is available at [www.gapminder.org ](www.gapminder.org)
+
+
+Unique Identifier: **Country **
+
+
+********
+
+## Research Question / Hypothesis
+
+The *GapMinder CodeBook* details the metadata for the data that has been captured in the GapMinder DataSet.
+It consists of various attributes for the world countries viz., Income per person, alchohol consumption, CO2 emissions, employment rate, life expectancy etc.
+
+The focus of this data study is to analyze data for a hypothetical research question.
+
+
+### Hypothesis / Research Question : 
+
+
+**Is there an association between breast cancer and the female employment ? **
+**And if so, what are the different factors that can possibly affect this association ?**
+
+
+
+On studying the GapMinder metadata, where the unique identifier is Country, it so appears that:
+
+From the references used  (mentioned in the (References section below ) : There is an association between breast cancer and female employment. The following are a few findings consolidated from the reference links 
+
+Exposure to electromagnetic  (radio and telegraph operators) , cosmic radiation ( as in working during air travel) may cause breast cancer.
+
+Urbanization may lead to more employment with more female employment in various fields/ streams 
+
+Female employment with work involved in more of rural areas may not have exposure to breast cancer causing conditions.
+
+Urbanization and the type and style of work may induce conditions that promote the victimization to such disease, especially work at night, shift work . Lack of Vitamin D can be a major contributor to such illnesses. Night work / shift work can lead to wrong sleep patterns which also favor the pre conditions for such illnesses.
+
+**Search Term Used :** breast cancer related to urbanization / breast cancer related to female employment rate (Google Scholar)
+
+**References :**
+
+1.  http://link.springer.com/article/10.1007/BF00051295
+
+2.  http://journals.lww.com/epidem/Abstract/2001/01000/Increased_Breast_Cancer_Risk_among_Women_Who_Work.13.aspx
+
+3. http://www.whijournal.com/article/S1049-3867(05)00002-2/abstract?cc=y=
+
+4.  http://aje.oxfordjournals.org/content/158/1/35.short
+
+5.  http://www.sciencedirect.com/science/article/pii/009174359090058R
+
+6.  http://www.tandfonline.com/doi/abs/10.3109/07420528.2010.531490
+
+
+********
+
+### CodeBook For GapMinders Dataset Study
+
+Based on the Hypothesis / Research Question under consideration, following attributes from the GapMinder Codebook are studied , explored  and analyzed.
+
+```{r warning=FALSE, comment=FALSE, message=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+knitr::opts_chunk$set(message = FALSE, echo=TRUE)
+
+# Library for loading CSV data
+library(RCurl)
+
+# Library for data display in tabular format
+
+library(DT)
+
+# Library for plotting
+library(ggplot2)
+
+library(gcookbook)
+
+library(ggthemes)
+
+# Lbrary for Country speific codes
+library(countrycode)
+
+```
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+data.giturl <- "https://raw.githubusercontent.com/DataDriven-MSDA/RProgramming/master/GapMinderCodeBook.csv"
+gmcodebook.gitdata <- getURL(data.giturl)
+gmcodebook.gitdata.csv <- read.csv2(text=gmcodebook.gitdata, header=T, sep=",",stringsAsFactors = FALSE)
+
+```
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+datatable(gmcodebook.gitdata.csv, options = list(
+  searching = FALSE,
+  pageLength = 5,
+  lengthMenu = c(5, 10, 15, 20)
+))
+
+
+```
+
+********
+
+
+### Extracting Raw Data From GitHub Data File And Reading In CSV Format
+
+
+The dataset is extracted from GitHub data file and read in csv format.
+Required data from attributes as per the hypothesis/ research question is subsetted for the study.
+
+From this, only the complete cases are considered. The data is cleaned up by removing the NA values for the selected
+attributes in the data set.
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+data.giturl <- "https://raw.githubusercontent.com/DataDriven-MSDA/RProgramming/master/gapminder.csv"
+
+gapminder.gitdata <- getURL(data.giturl)
+
+gapminder.gitdata.csv <- read.csv(text=gapminder.gitdata, header=T, sep=",",na.strings = c("", "NA"))
+
+gapminder.datastudy <- subset(gapminder.gitdata.csv, select=c(country, breastcancerper100th, femaleemployrate, employrate, urbanrate))
+
+gapminder.nonnullcleandata <- na.omit(gapminder.datastudy)
+
+
+
+```
+
+
+Two additional custom attributes are added to the dataset under study.
+
+**Status** is a calculated attribute based upon the female employment rate as follow
+
+Female Employment Rate | Status
+---------------------- | -------------
+>= 60 | V
+< 60 and >25 | M 
+<=25 | L
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+X <- nrow(gapminder.nonnullcleandata)
+
+for(i in 1:X)  
+{  
+     if (gapminder.nonnullcleandata$femaleemployrate[i] >= 60){
+          gapminder.nonnullcleandata$Status[i] <- "V"
+     } 
+          else if (gapminder.nonnullcleandata$femaleemployrate[i] > 25 & gapminder.nonnullcleandata$femaleemployrate[i] < 60){
+          gapminder.nonnullcleandata$Status[i] <- "M"
+     
+          }    else if(gapminder.nonnullcleandata$femaleemployrate[i] <= 25) {
+               gapminder.nonnullcleandata$Status[i] <- "L"
+          }
+}
+
+```
+
+
+
+**UrbanFactor** is a calculated attribute based upon the female employment rate as follow
+
+Urban Rate | UrbanFactor
+---------- | -------------
+>= 70 | U
+< 70 and >50 | D 
+<=50 | R
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+Y <- nrow(gapminder.nonnullcleandata)
+
+for(i in 1:Y)  
+{  
+     if (gapminder.nonnullcleandata$urbanrate[i] >= 70){
+          gapminder.nonnullcleandata$UrbanFactor[i] <- "U"
+     } 
+     else if (gapminder.nonnullcleandata$urbanrate[i] > 50 & gapminder.nonnullcleandata$femaleemployrate[i] < 70){
+          gapminder.nonnullcleandata$UrbanFactor[i] <- "D"
+          
+     }    else if(gapminder.nonnullcleandata$urbanrate[i] <= 50) {
+          gapminder.nonnullcleandata$UrbanFactor[i] <- "R"
+     }
+}
+
+```
+
+********
+
+### Data Under Study
+
+The data extracted, cleansed, transformed is
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=80)}
+
+datatable(gapminder.nonnullcleandata, options = list(
+  searching = FALSE,
+  pageLength = 5,
+  lengthMenu = c(5, 10, 15, 20)
+))
+
+
+```
+
+********
+
+### Segregating Urban / Developing / Rural  Countries Data
+
+The data is segregated as per *urbanrate* with the following categoriztion.
+
+- **Urban Rate :**
+     - *>= 70 : Urbanized Countries*
+     - *>50 and < 70 : Developed Countries*
+     - *<= 50 : Developing Countries*
+
+     
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=10,fig.height=10}
+
+
+gapminder.urbancountries <- subset(gapminder.nonnullcleandata, urbanrate >=70)
+
+
+gapminder.devcountries <- subset(gapminder.nonnullcleandata, urbanrate > 50 & urbanrate < 70)
+
+
+gapminder.ruralcountries <- subset(gapminder.nonnullcleandata, urbanrate <= 50)
+
+
+
+
+```
+
+
+********
+
+
+## Analyzing The Data With Plots
+
+
+
+### Plot 1 : Plotting Female Employment Rate, Urban Rate, Breast Cancer for Urbanized Countries
+
+
+The most urbanized countries like United States , Canda, Switzerland, Iceland, etc have higher urban rate and high female employment rate. These countries do have higher breast cancer disease rate as well.
+
+The other urbanized countries like United Arab Emirates, although urbanized have less female employment rate and lesser disease rate compared to other high urbanized countries.
+
+
+
+```{r warning=FALSE, comment=FALSE, message=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=10,fig.height=10}
+
+
+gurban <- ggplot(gapminder.urbancountries, aes(y=country)) + scale_x_continuous(name = "Female Employ Rate (FR) / Urban Rate (UR) / BreastCancer per 100th (BC)") + geom_point(aes(x=femaleemployrate), colour="purple") + geom_point(aes(x=urbanrate), colour = "green") + geom_point(aes(x=breastcancerper100th), colour="red" ) + ggtitle("Urban Countries : Female Employ Rate, Urban Rate, BreastCancer Plot")  
+ 
+gurban + theme_economist() + annotate("text", label = "FR", x = 105, y = 6, size = 4, colour = "purple") + annotate("text", label = "UR", x = 105, y = 4, size = 4, colour = "green") + annotate("text", label = "BC", x = 105, y = 2, size = 4, colour = "red") 
+
+
+```
+
+
+### Plot 2 : Plotting Female Employment Rate, Urban Rate, Breast Cancer for Developing Countries
+
+
+The developing countries have mediocre disease risk. The plot clearly depicts that with rise in female employment the disease factor is also higher. eg Ireland , Italy, Portugal, Finland , Austria and countries like Latvia, Jamaica, Japan are on rise with the disease risk.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=10,fig.height=10}
+
+
+gdev <- ggplot(gapminder.devcountries, aes(y=country)) + scale_x_continuous(name = "Female Employ Rate (FR) / Urban Rate (UR) / BreastCancer per 100th (BC)") + geom_point(aes(x=femaleemployrate), colour="purple") + geom_point(aes(x=urbanrate), colour="green") + geom_point(aes(x=breastcancerper100th), colour="red") + ggtitle("Developing Countries : Female Employ Rate, Urban Rate, BreastCancer Plot" ) 
+
+gdev + theme_minimal() + annotate("text", label = "FR", x = 85, y = 6, size = 4, colour = "purple") + annotate("text", label = "UR", x = 85, y = 4, size = 4, colour = "green") + annotate("text", label = "BC", x = 85, y = 2, size = 4, colour = "red") 
+
+```
+
+
+********
+
+### Plot 3 : Plotting Female Employment Rate, Urban Rate, Breast Cancer for Rural Countries
+
+In rural countries, we see a mix of low and high female employment.
+
+Countries like Solvenia, Moldova, Barbados have higher female employ rate and increasing disease risk 
+
+Countries like Burundi, Rwanda have high female employment rate and low urban rate have much less disease factor , as the female working class might not be exposed to the industrialized unfavourable conditions in modern work. The female work class might be more of local, small scale work oriented.
+
+
+Countries like lowe female employment rate, low urbanization like Afghanistan,  Egypt we see lesser disease rate.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=10,fig.height=10}
+
+
+grural <- ggplot(gapminder.ruralcountries, aes(y=country)) + scale_x_continuous(name = "Female Employ Rate (FR) / Urban Rate (UR) / BreastCancer per 100th (BC)") + geom_point(aes(x=femaleemployrate), colour="purple") + geom_point(aes(x=urbanrate), colour="green") + geom_point(aes(x=breastcancerper100th), colour="red") + ggtitle("Rural Countries : Female Employ Rate, Urban Rate, BreastCancer Plot" ) 
+
+grural + theme_bw() + annotate("text", label = "FR", x = 85, y = 6, size = 4, colour = "purple") + annotate("text", label = "UR", x = 85, y = 4, size = 4, colour = "green") + annotate("text", label = "BC", x = 85, y = 2, size = 4, colour = "red") 
+
+
+
+```
+
+
+### Plot 4 : Basic Scatter Plot For Plotting Data Relevant To Hypothesis Female Employment Rate Vs Breast Cancer (For All Countries)
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120)}
+
+plot(gapminder.nonnullcleandata$breastcancerper100th~gapminder.nonnullcleandata$femaleemployrate, data= gapminder.nonnullcleandata, xlab="Female Employment Rate", ylab="Breast Cancer", main="Hypothesis: Female Employment Rate Vs Breast Cancer")
+```
+
+********
+
+### Plot 5 : Plotting  Breast Cancer Vs Female Employment Rate For All Countries With ggplot function
+
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120)}
+
+ggplot(gapminder.nonnullcleandata, aes(y=gapminder.nonnullcleandata$breastcancerper100th, x= gapminder.nonnullcleandata$femaleemployrate )) + geom_point() + ggtitle("Hypothesis : Female Employment Rate Vs Breast Cancer per 100th") + scale_x_continuous(name="Female Employment Rate") + scale_y_continuous(name="Breast Cancer Per 100th")
+
+```
+
+
+### Plot 6 : Plotting  Breast Cancer Vs Urbanisation Rate With  Female Employment Rate As Factor
+
+
+Most of the high urban rate, high disease rate dots plotted also show higher female employment rate ( light blue dots)
+The much lighter blue dots which are for high female employment rate with less disease rate are more clustered towards much lesser urbanrate countries. (left bottom area of the plot)
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120)}
+
+ggplot(gapminder.nonnullcleandata, aes(y=gapminder.nonnullcleandata$breastcancerper100th, x= gapminder.nonnullcleandata$urbanrate )) + geom_point(aes(color = femaleemployrate))  + scale_x_continuous(name="Urban Rate") + scale_y_continuous(name="Breast Cancer Per 100th")
+
+```
+
+### Plot  7 : Plotting  Breast Cancer Vs Female Employment Rate With Urbanisation Rate As Factor
+
+This plot shows how urbanization plays a role.
+
+The blue dots depict most urban countries  which show high disease factor
+
+The green dots are for rural countries which are plotted much lower in the graph depicting lower disease factor even though the female employment rate is increasing. This is dues to less exposure to urban related risk factors
+
+The red dots from the developed countries who run the risk of an increase in disease rate. 
+
+Clearly *urbanization* factor does play a major role in disease exposure to the female working class.
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120)}
+
+ggplot(gapminder.nonnullcleandata, aes(y=gapminder.nonnullcleandata$breastcancerper100th, x= gapminder.nonnullcleandata$femaleemployrate )) + geom_point(aes(color = UrbanFactor)) + scale_x_continuous(name="Female Employment Rate") + scale_y_continuous(name="Breast Cancer Per 100th") 
+
+```
+ 
+********
+
+### Plot 8 : Plotting with Y-Axis Formating
+
+Most of the dots, green and blue (for developed and urban countries respectively) are on the higher side of disease rate.
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=15,fig.height=15}
+
+
+ggplot(gapminder.urbancountries, aes(x=gapminder.urbancountries$breastcancerper100th, y= (countrycode(country, "country.name","iso3c")))) + geom_point(aes(color = factor(Status), group = Status) , size = 3) + scale_y_discrete(name="Country")  + scale_color_discrete(name="Status") + scale_x_continuous(name="Breast Cancer Per 100th")  + theme(axis.text.x = element_text(size=10, hjust = 1)) + theme(axis.text.y = element_text(size=10, hjust = 1)) 
+
+
+
+```
+
+### Plot 9 :Countries (Urban, Developng, Rural ) Vs BreastCancer with incremental Urban rate
+
+
+These plots depict that as urbanization increases , it increases the disease factor with female employment rate
+Urban countries like Belgium , Australia, United States, United Kingdom show high disease factor.
+
+
+Exceptions : Developed countries like Gabon (GAB),  Gambia (GMB), Liberia (LBR), El Salvador (SLV), have lower disease rate inspite of having a mediocre urbanization, this might be due to other lifestyle factors like diet, climate
+
+
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=120), fig.width=10,fig.height=10}
+
+ggplot(gapminder.urbancountries, aes(x=gapminder.urbancountries$breastcancerper100th, y= (countrycode(country, "country.name","iso3c")) )) + geom_point(aes(color = urbanrate)) + scale_y_discrete(name=" Urban Country") + scale_x_continuous(name="Breast Cancer Per 100th")  + theme(axis.text.x = element_text( hjust = 1)) 
+
+
+ggplot(gapminder.devcountries, aes(x=gapminder.devcountries$breastcancerper100th, y= (countrycode(country, "country.name","iso3c")) )) + geom_point(aes(color = urbanrate)) + scale_y_discrete(name="Developing Country") + scale_x_continuous(name="Breast Cancer Per 100th")  + theme(axis.text.x = element_text( hjust = 1))
+
+ggplot(gapminder.ruralcountries, aes(x=gapminder.ruralcountries$breastcancerper100th, y= (countrycode(country, "country.name","iso3c")) )) + geom_point(aes(color = urbanrate)) + scale_y_discrete(name="Rural Country") + scale_x_continuous(name="Breast Cancer Per 100th")  + theme(axis.text.x = element_text( hjust = 1)) 
+
+
+
+```
+
+## Hypothesis Conclusion
+
+It can be derived that there does exist as association with female employment rate and breast cancer.
+Factors like urbanization do affect this association in terms of, more the urbanization more risk of breast cancer to the women working in environments and jobs that expose them to urban unhealthy lifestyle.
+
+Most of the developing countries run the risk of an increase in the disease.
+
+Under developed or rural countries , with high female employment shows lower disease rate . This might be due to the fact that the work is mostly in small scale industries that may not have exposed them to unfavorable environments , thus explaining the lower rate in the disease for such countries
+
+There can be exceptions where urbanized countries have lesser disease rate and may be the affect of better living environments and conditions, better diet.
+Similarly rural countries with mediocre disease rate can be explained by poor dietary conditions, uneducation and other lifestyle and health related factors.
+
+However, commonly from all the plots one can conclude that Urbanized countries and Developing countries with high female employment does depict an increased disease factor for the working female class, thus concluding the hypothesis.
+
+
+********
