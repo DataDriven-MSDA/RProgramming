@@ -1,13 +1,14 @@
-\name{getData}
-\alias{getData}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Gets data from the URL specified}
+\name{ getData(path)
+}
+\alias{getData
+}
+\title{Get Data From The URL Specified
+}
 \description{
-The function getData , accepts a URL as input parameter and retrieves the content with the web call / cache if called more than once in the same R session. The function returns a list object for JSON response or a text representation of the response otherwise.}
+The function getData , accepts a URL as input parameter and retrieves the content with the web call / cache (from cacheEnv )if called more than once in the same R session. The function returns a list object for JSON response or a text representation of the response otherwise.}
 \usage{
 getData(path)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{path}{
 %%     ~~Describe \code{path} here~~
@@ -22,8 +23,7 @@ dataframe, if http response is of application/xml or text/xml
 text, for response is of any other content type
 }
 \references{
-%% ~put references to the literature/web site here ~
-}
+cacheEnv : global variable set in environment as cache for visited URL responses for the session}
 \author{
 Kumudini Bhave
 }
@@ -42,7 +42,7 @@ Kumudini Bhave
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently called as
-response <- getData("www.cnn.com")
+responsefromfunction <- getData("www.cnn.com")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
