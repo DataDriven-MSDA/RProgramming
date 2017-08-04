@@ -1,5 +1,17 @@
+#' @import httr
+#' @importFrom jsonlite fromJSON
+#' @import testthat
+#' @importFrom XML xmlParse
+#' @importFrom XML xmlToDataFrame
+#' @import RCurl
+#' @export
+
+
 # getData() function to call web url
-# @param1 path of type URL
+#' @param1 path
+#' @return list , if http response is of application/json, dataframe, if http response is of application/xml or text/xml, text, for response is of any other content type
+#' @examples
+#' response <- getData("www.cnn.com")
 
 getData<- function(path) {
 
@@ -31,7 +43,7 @@ getData<- function(path) {
      # Check for Success and return response
      if(resp$status_code == 200)
      {
-          # return response as list for json data, XMLInternal document for XML data  else as text
+          # return response as list for json data, dataframe for XML data  else as text
           if(http_type(resp)=="application/json")
           {
                resp <- fromJSON(content(resp,type="text"))
@@ -39,8 +51,9 @@ getData<- function(path) {
           else if (http_type(resp) =="application/xml" | http_type(resp) =="text/xml")
           {
                resp <- xmlParse(content(resp, "text"))
+               resp <- xmlToDataFrame(resp)
           }
-          else if (http_type(resp) !="application/json")
+          else if (http_type(resp) !="application/json" & http_type(resp) !="application/xml" & http_type(resp) !="text/xml")
           {
                resp <- content(resp, "text")
           }
