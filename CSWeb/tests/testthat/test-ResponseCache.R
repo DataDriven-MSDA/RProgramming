@@ -1,7 +1,7 @@
 context("Response From Cache, CustomHeader")
 
 
-# CAlling the new url makes a web call, first time, checking for list returned for json type
+# Calling the new url makes a web call, first time, checking for list returned for json type
 resp1 <- getData("http://json-schema.org/example/geo.json")
 # capturing the execution timestamp
 resp1exectime <- resp1$response_header$date
@@ -11,8 +11,7 @@ test_that("getData for application/json returns list for url 3 json", {
 })
 
 
-
-# CAlling the new url makes a web call
+# Calling the new url makes a web call
 resp2 <- getData("https://api.github.com/repos/DataDriven-MSDA/DATA607")
 
 test_that("getData for json returns list for url 4 json", {
@@ -29,7 +28,7 @@ test_that("getData for json returns list for url 4 json", {
 })
 
 
-# CAlling the same url again fetches from the cache
+# Calling the same url again fetches from the cache
 resp1again <- getData("http://json-schema.org/example/geo.json")
 # capturing the execution timestamp
 resp1againexectime <- resp1again$response_header$date
