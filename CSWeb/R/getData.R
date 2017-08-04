@@ -1,3 +1,4 @@
+#' @include setEnvironment.R
 #' @import httr
 #' @importFrom jsonlite fromJSON
 #' @import testthat
@@ -8,7 +9,7 @@
 
 
 # getData() function to call web url
-#' @param1 path
+#' @param path , the Web API/ URL to access /scrape
 #' @return list , if http response is of application/json, dataframe, if http response is of application/xml or text/xml, text, for response is of any other content type
 #' @examples
 #' response <- getData("www.cnn.com")
