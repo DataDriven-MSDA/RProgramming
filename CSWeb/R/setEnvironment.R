@@ -1,2 +1,2 @@
-#' cacheEnv Package variable available to all functions in package
+#' cacheEnv Package variable available to all objects/functions in package
 cacheEnv <- new.env()

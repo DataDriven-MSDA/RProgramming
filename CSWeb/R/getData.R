@@ -1,3 +1,12 @@
+#' @section CSWeb functions:
+#' Get Data From The URL Specified
+#'
+#' \code{getData} returns the response from a call to web url
+#' @param path...character, the Web API/ URL to access /scrape
+#' @return list , if http response is of application/json, dataframe, if http response is of application/xml or text/xml, text, for response is of any other content type
+#' @examples
+#' response <- getData("www.cnn.com")
+#'
 #' @include setEnvironment.R
 #' @import httr
 #' @importFrom jsonlite fromJSON
@@ -9,18 +18,11 @@
 
 
 # getData() function to call web url
-#' @param path , the Web API/ URL to access /scrape
-#' @return list , if http response is of application/json, dataframe, if http response is of application/xml or text/xml, text, for response is of any other content type
-#' @examples
-#' response <- getData("www.cnn.com")
-
 getData<- function(path) {
 
 
-     # Call the GET method with the URL passed as parameter
+      # Call the GET method with the URL passed as parameter
 
-     # url <- "http://echo.jsontest.com/fieldkey/fieldvalue/purpose/test"
-     #url <-"http://forecast.weather.gov/MapClick.php?lat=29.803&lon=-82.411&FcstType=digitalDWML"
       url<- path
 
       # To pass System Username in Header information as Caller
@@ -64,7 +66,7 @@ getData<- function(path) {
           stop_for_status(resp)
      }
 
+     # Returning a list of requested url, request header, response content and response header
      return (list(request_url = url, request_header = reqheader, response_content = resp, response_header = respheader))
 }
-
-
+# End of getData() function
