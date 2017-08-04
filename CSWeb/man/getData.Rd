@@ -1,9 +1,6 @@
-\name{ getData(path)
-}
-\alias{getData
-}
-\title{Get Data From The URL Specified
-}
+\name{getData(path)}
+\alias{getData}
+\title{Get Data From The URL Specified}
 \description{
 The function getData , accepts a URL as input parameter and retrieves the content with the web call / cache (from cacheEnv )if called more than once in the same R session. The function returns a list object for JSON response or a text representation of the response otherwise.}
 \usage{
@@ -27,14 +24,9 @@ cacheEnv : global variable set in environment as cache for visited URL responses
 \author{
 Kumudini Bhave
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\link{cacheEnv}
+\link{CSWeb}
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----
@@ -44,7 +36,4 @@ Kumudini Bhave
 ## The function is currently called as
 responsefromfunction <- getData("www.cnn.com")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ Web Scrape }
