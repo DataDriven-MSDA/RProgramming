@@ -1,1 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+import(httr)
+import(jsonlite)
+import(XML)
+import(RCurl)
