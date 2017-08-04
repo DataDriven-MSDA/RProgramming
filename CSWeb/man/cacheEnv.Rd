@@ -6,9 +6,9 @@
 \title{cacheEnv Package variable available to all functions in package}
 \format{An object of class \code{environment} of length 0.}
 \usage{
-cacheEnv
+cacheEnv called internally by package functions
 }
 \description{
 cacheEnv Package variable available to all functions in package
 }
-\keyword{datasets}
+\keyword{cache}

@@ -8,5 +8,4 @@
 \description{
 The foo package provides functions to access Web Content
 by passing the required URL to getData function.
-#'
 }

@@ -8,7 +8,7 @@ getData(path)
 }
 \arguments{
   \item{path}{
-%%     ~~Describe \code{path} here~~
+Any web URL
 }
 }
 \details{
